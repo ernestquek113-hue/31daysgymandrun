@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>31天挑战打卡</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+:root{--bg:#EEF1F4;--card:#fff;--ink:#0F1B2D;--mute:#667385;--line:#D8DEE6;--run:#1F4FFF;--gym:#FF6A1A;--ok:#14A86B;--miss:#C9D1DB;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--card:#141E30;--ink:#E8EEF6;--mute:#8E9BB0;--line:#26334A;--run:#5B82FF;--gym:#FF8744;--ok:#2BC987;--miss:#2A3850}}
+:root[data-theme="dark"]{--bg:#0B1220;--card:#141E30;--ink:#E8EEF6;--mute:#8E9BB0;--line:#26334A;--run:#5B82FF;--gym:#FF8744;--ok:#2BC987;--miss:#2A3850}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif}
+.wrap{max-width:480px;margin:0 auto;padding:18px 16px 40px}
+.num{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
+h1{margin:0;font-size:20px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.big{font-size:64px;line-height:.9}
+.big small{font-size:22px;color:var(--mute);font-weight:600}
+.stats{display:flex;gap:18px;text-align:right}
+.stats b{display:block;font-size:26px;line-height:1}
+.stats span{font-size:12px;color:var(--mute)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.cell{aspect-ratio:1;border-radius:8px;border:2px solid transparent;background:var(--card);position:relative;overflow:hidden;padding:0;cursor:pointer;color:var(--ink);font-size:15px}
+.cell .h{position:absolute;left:0;right:0;height:50%;background:var(--miss);opacity:.45}
+.cell .h.t{top:0}.cell .h.b{bottom:0}
+.cell .h.t.on{background:var(--run);opacity:1}.cell .h.b.on{background:var(--gym);opacity:1}
+.cell.future .h{opacity:.2}
+.cell.miss .h{background:var(--miss);opacity:.9}
+.cell span{position:relative;z-index:1;font-size:17px;color:#fff;mix-blend-mode:normal;text-shadow:0 0 3px rgba(0,0,0,.45)}
+.cell.future span,.cell.miss span{color:var(--mute);text-shadow:none}
+.cell.sel{border-color:var(--ink)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mute);margin-bottom:16px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.panel h2{font-size:17px;margin:4px 0 10px;display:flex;align-items:center;justify-content:space-between}
+.tag{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--line);color:var(--mute);font-weight:500}
+.tag.ok{background:var(--ok);color:#fff}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;border-left:5px solid var(--line)}
+.card.run{border-left-color:var(--run)}.card.gym{border-left-color:var(--gym)}
+.card.done{border-left-color:var(--ok)}
+.card h3{margin:0 0 2px;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.hint{color:var(--mute);font-size:13px;margin:0 0 10px}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.row input{width:90px;font:inherit;font-size:20px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.row input:disabled{opacity:.6}
+.btn{display:inline-block;font:inherit;font-weight:600;padding:11px 16px;border-radius:10px;border:0;background:var(--ink);color:var(--bg);cursor:pointer;width:100%;text-align:center}
+.btn.run{background:var(--run);color:#fff}.btn.gym{background:var(--gym);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--mute);font-weight:500;width:auto;padding:6px 12px;font-size:13px}
+.btn:focus-visible,.cell:focus-visible,input:focus-visible{outline:3px solid var(--run);outline-offset:2px}
+.shot{width:100%;max-height:300px;object-fit:contain;border-radius:10px;background:var(--bg);display:block;margin-bottom:8px}
+.note{font-size:13px;color:var(--mute);margin:6px 0}
+.warn{color:var(--gym)}
+.hero{background:var(--card);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px}
+.hero p{color:var(--mute);margin:8px 0 16px}
+.win{background:var(--ok);color:#fff;border-radius:14px;padding:16px;text-align:center;margin-bottom:14px;font-weight:600}
+.foot{text-align:center;margin-top:22px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+.toast.show{opacity:1}
+.card.board{border-left-color:var(--ok)}
+.lb{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.lb.me{font-weight:700}
+.rk{width:22px;font-size:20px;color:var(--mute)}
+.nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk{letter-spacing:2px;color:var(--mute)}
+.sc{font-size:22px}.sc small{font-size:13px;color:var(--mute);margin-left:2px}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<script>
+var KEY='c31:meta', N=31, MINKM=2;
+var mem={}, meta=null, sel=null, confirmReset=false;
+
+function lsGet(k){try{var v=localStorage.getItem(k);return v}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+function load(){var v=lsGet(KEY);try{meta=v?JSON.parse(v):null}catch(e){meta=null}}
+function save(){if(!lsSet(KEY,JSON.stringify(meta)))toast('存储空间不足，数据只保留到关闭页面');sync()}
+function getImg(d,t){var k='c31:i:'+d+':'+t;return mem[k]||lsGet(k)}
+function setImg(d,t,v){var k='c31:i:'+d+':'+t;if(v){mem[k]=v;return lsSet(k,v)}delete mem[k];lsDel(k);return true}
+
+function ymd(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
+function parse(s){var a=s.split('-');return new Date(+a[0],+a[1]-1,+a[2])}
+function today(){
+  if(!meta)return 0;
+  var t=new Date();t=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  return Math.round((t-parse(meta.start))/864e5)+1;
+}
+function day(d){return (meta.days[d])||(meta.days[d]={km:0,r:0,g:0})}
+function runOk(d){var x=meta.days[d];return !!(x&&x.r&&x.km>=MINKM)}
+function gymOk(d){var x=meta.days[d];return !!(x&&x.g)}
+function full(d){return runOk(d)&&gymOk(d)}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('show')},2200)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function start(){
+  var t=new Date();meta={start:ymd(t),days:{}};save();sel=1;render();
+}
+function reset(){
+  for(var d=1;d<=N;d++){setImg(d,'run',null);setImg(d,'gym',null)}
+  lsDel(KEY);syncDelete();meta=null;sel=null;confirmReset=false;render();
+}
+function setKm(d,v){
+  var n=parseFloat(v);if(isNaN(n)||n<0)n=0;
+  day(d).km=Math.round(n*100)/100;save();
+  if(day(d).r&&n<MINKM)toast('距离需要达到 '+MINKM+' km 才算完成');
+  else if(runOk(d))toast('跑步打卡成功');
+  render();
+}
+function pick(d,t,file){
+  if(!file)return;
+  var fr=new FileReader();
+  fr.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var s=Math.min(1,640/Math.max(im.width,im.height));
+      var c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      var url=c.toDataURL('image/jpeg',0.55);
+      if(!setImg(d,t,url))toast('存储空间不足，图片只保留到关闭页面');
+      day(d)[t==='run'?'r':'g']=1;save();
+      if(t==='gym')toast('GYM 打卡成功');
+      else toast(runOk(d)?'跑步打卡成功':'已上传截图，还需要填写距离 ≥ '+MINKM+' km');
+      render();
+    };
+    im.onerror=function(){toast('图片读取失败，请换一张')};
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+function removeImg(d,t){setImg(d,t,null);day(d)[t==='run'?'r':'g']=0;save();render()}
+
+function streak(){
+  var T=Math.min(today(),N),n=0,d=T;
+  if(!full(d))d--;
+  for(;d>=1&&full(d);d--)n++;
+  return n;
+}
+
+function card(d,t,editable){
+  var isRun=t==='run',ok=isRun?runOk(d):gymOk(d),img=getImg(d,t),x=day(d);
+  var h='<div class="card '+(ok?'done':t)+'"><h3><span>'+(isRun?'🏃 早上跑步':'🏋️ 晚上 GYM')+'</span><span class="tag'+(ok?' ok':'')+'">'+(ok?'已完成':'未完成')+'</span></h3>';
+  h+='<p class="hint">'+(isRun?'跑步 ≥ '+MINKM+' km，并上传跑步 App 的截图':'拍一张健身器械的照片')+'</p>';
+  if(isRun){
+    h+='<div class="row"><input id="km" type="number" inputmode="decimal" step="0.1" min="0" placeholder="0.0" value="'+(x.km||'')+'"'+(editable?'':' disabled')+' onchange="setKm('+d+',this.value)"><b>km</b>';
+    if(x.km>0&&x.km<MINKM)h+='<span class="note warn">还差 '+(MINKM-x.km).toFixed(1)+' km</span>';
+    h+='</div>';
+  }
+  if(img){
+    h+='<img class="shot" src="'+img+'" alt="'+(isRun?'跑步截图':'器械照片')+'">';
+    if(editable)h+='<label class="btn ghost" for="f-'+t+'">重新上传</label> <button class="btn ghost" onclick="removeImg('+d+',\''+t+'\')">删除</button>';
+  }else if(editable){
+    h+='<label class="btn '+t+'" for="f-'+t+'">'+(isRun?'上传跑步截图':'拍照 / 上传器械照片')+'</label>';
+  }else{
+    h+='<p class="note">这一天没有上传图片</p>';
+  }
+  if(editable)h+='<input id="f-'+t+'" type="file" accept="image/*" onchange="pick('+d+',\''+t+'\',this.files[0])">';
+  return h+'</div>';
+}
+
+function render(){
+  var app=document.getElementById('app'),h='';
+  if(!meta){
+    app.innerHTML='<div class="top"><h1>31天挑战打卡</h1></div><div class="hero"><div class="num big">31<small> 天</small></div><p>每天两件事：<br>早上跑步超过 2 km，上传截图<br>晚上去 GYM，拍下器械照片<br>两项都完成，当天才算成功</p><button class="btn" onclick="start()">从今天开始第 1 天</button></div>';
+    return;
+  }
+  var T=today(),over=T>N,tc=Math.min(T,N);
+  if(sel===null||sel>tc)sel=tc;
+  var done=0;for(var i=1;i<=N;i++)if(full(i))done++;
+  h+='<div class="top"><div><h1>31天挑战打卡</h1><div class="num big">'+(over?N:tc)+'<small> / 31 天</small></div></div><div class="stats"><div><b class="num">'+done+'</b><span>成功天数</span></div><div><b class="num">'+streak()+'</b><span>连续天数</span></div></div></div>';
+  h+='<div class="bar"><i style="width:'+(done/N*100)+'%"></i></div>';
+  if(done===N)h+='<div class="win">🎉 31 天全部完成，你做到了！</div>';
+  else if(over)h+='<div class="win" style="background:var(--mute)">31 天挑战已结束，完成了 '+done+' 天</div>';
+  h+='<div class="grid">';
+  for(var d=1;d<=N;d++){
+    var cls='cell',fut=d>T,past=d<T;
+    if(fut)cls+=' future';else if(past&&!full(d))cls+=' miss';
+    if(d===sel)cls+=' sel';
+    h+='<button class="'+cls+'" onclick="sel='+d+';render()" aria-label="第'+d+'天"'+(fut?' disabled':'')+'><i class="h t'+(runOk(d)?' on':'')+'"></i><i class="h b'+(gymOk(d)?' on':'')+'"></i><span class="num">'+d+'</span></button>';
+  }
+  h+='</div><div class="legend"><span><i style="background:var(--run)"></i>跑步完成</span><span><i style="background:var(--gym)"></i>GYM 完成</span><span><i style="background:var(--miss)"></i>未完成</span></div>';
+  var editable=(sel===T&&!over);
+  h+='<div class="panel"><h2><span>第 '+sel+' 天'+(sel===T&&!over?'（今天）':'')+'</span><span class="tag'+(full(sel)?' ok':'')+'">'+(full(sel)?'今日任务完成':'进行中')+'</span></h2>';
+  if(!editable&&sel<T&&!full(sel))h+='<p class="note">这一天已经过去，不能补打卡。</p>';
+  h+=card(sel,'run',editable)+card(sel,'gym',editable)+'</div>';
+  h+='<div id="board"></div>';
+  h+='<div class="foot">'+(confirmReset?'<p class="note warn">会清除所有记录和照片，确定吗？</p><button class="btn ghost" onclick="reset()">确定重置</button> <button class="btn ghost" onclick="confirmReset=false;render()">取消</button>':'<button class="btn ghost" onclick="confirmReset=true;render()">重新开始挑战</button>')+'<p class="note">记录保存在这台设备的浏览器里，换设备或清除浏览数据会丢失。</p></div>';
+  app.innerHTML=h;renderBoard();
+}
+
+var db=null,uid=null,rows=[],names={},syncT=null,dbState='loading';
+function stats(){
+  var d=0,i;for(i=1;i<=N;i++)if(full(i))d++;
+  var T=Math.min(today(),N);
+  return {done:d,streak:streak(),day:T,tr:runOk(T)?1:0,tg:gymOk(T)?1:0,ty:ymd(new Date())};
+}
+function sync(){
+  if(!db||!uid||!meta||dbState==='readonly')return;
+  clearTimeout(syncT);
+  syncT=setTimeout(function(){
+    var s=stats();s.updated=Date.now();
+    db.doc('board/'+uid).set(s).catch(function(){dbState='readonly';renderBoard()});
+  },700);
+}
+function syncDelete(){clearTimeout(syncT);if(db&&uid&&dbState!=='readonly')db.doc('board/'+uid).delete().catch(function(){})}
+function resolveNames(u){
+  var ids=rows.map(function(r){return r.id}).filter(function(i){return !(i in names)});
+  if(!ids.length)return;
+  ids.forEach(function(i){names[i]=''});
+  u.profiles(ids).then(function(p){ids.forEach(function(i){names[i]=(p[i]&&p[i].name)||''});renderBoard()}).catch(function(){});
+}
+async function initDb(){
+  try{
+    if(!window.claude){dbState='off';renderBoard();return}
+    var u=await claude.use('user'),d=await claude.use('db');
+    if(!u||!d){dbState='off';renderBoard();return}
+    uid=await u.id();
+    if(!uid){dbState='off';renderBoard();return}
+    db=d;dbState='on';
+    var cw=await u.can('data.write');
+    if(cw===false)dbState='readonly';
+    db.collection('board').onSnapshot(function(snap){
+      rows=snap.docs.map(function(x){var v=x.data()||{};v.id=x.id;return v});
+      resolveNames(u);renderBoard();
+    },function(){dbState='off';renderBoard()});
+  }catch(e){dbState='off';renderBoard()}
+}
+function renderBoard(){
+  var el=document.getElementById('board');if(!el)return;
+  if(dbState==='loading'){el.innerHTML='';return}
+  if(dbState==='off'){el.innerHTML='<div class="card board"><h3>好友排行榜</h3><p class="hint">登录 Claude 并通过朋友分享的链接打开，才能看到大家的进度。</p></div>';return}
+  var ty=ymd(new Date());
+  var list=rows.slice().sort(function(a,b){return ((+b.done||0)-(+a.done||0))||((+b.streak||0)-(+a.streak||0))||((+a.updated||0)-(+b.updated||0))});
+  var h='<div class="card board"><h3>好友排行榜</h3><p class="hint">只显示成功天数和今天的完成情况，不会共享照片。</p>';
+  if(dbState==='readonly')h+='<p class="note warn">你现在只有查看权限，你的进度不会上传。请让分享者把你设为可互动成员。</p>';
+  if(!list.length)h+='<p class="note">还没有人上传进度，完成一次打卡就会出现在这里。</p>';
+  list.forEach(function(r,i){
+    var me=r.id===uid,nm=esc(names[r.id]||'朋友')+(me?'（我）':''),td=r.ty===ty;
+    h+='<div class="lb'+(me?' me':'')+'"><span class="num rk">'+(i+1)+'</span><span class="nm">'+nm+'</span><span class="tk">'+(td?(r.tr?'🏃':'·')+(r.tg?'🏋️':'·'):'')+'</span><span class="num sc">'+(+r.done||0)+'<small>天</small></span></div>';
+  });
+  el.innerHTML=h+'</div>';
+}
+load();render();initDb();
+</script>
+</body>
+</html>
